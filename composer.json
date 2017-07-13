@@ -1,0 +1,11 @@
+{
+  "name": "burdapraha/oc_gtm_ecommerce",
+  "type": "vqmod-plugin",
+  "description": "Opencart 2.x for ecommerce tracking via Google Tag Manager",
+  "keywords": ["opencart", "opencart-2x", "gtm", "ecommerce"],
+  "homepage": "http://burda.cz",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.6.0"
+  }
+}

@@ -1,0 +1,78 @@
+<modification>
+    <id>GTM e-commerce tracking</id>
+    <version>0.0.1</version>
+    <vqmver>2.1.5</vqmver>
+    <author>Michal Landsman</author>
+
+    <file name="catalog/model/checkout/order.php">
+        <operation>
+            <search position="before"><![CDATA[public function getOrder($order_id) {]]></search>
+            <add>
+                <![CDATA[
+                    public function getOrderProducts($order_id) {
+                    $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");
+
+                    return $query->rows;
+                    }
+			    ]]>
+            </add>
+        </operation>
+    </file>
+
+    <file name="catalog/controller/checkout/success.php">
+        <operation>
+            <search position="after"><![CDATA[if (isset($this->session->data['order_id'])) {]]></search>
+            <add>
+                <![CDATA[
+                    $this->load->model('checkout/order');
+                    $data['data_layer_order_data'] = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+                    $data['data_layer_order_data']['products'] = $this->model_checkout_order->getOrderProducts($this->session->data['order_id']);
+			    ]]>
+            </add>
+        </operation>
+    </file>
+
+    <file name="catalog/view/theme/*/template/common/success.tpl">
+        <operation>
+            <search position="after"><![CDATA[<?php echo $header; ?>]]></search>
+            <add>
+                <![CDATA[
+                    <!-- Burda Praha GTM tracking -->
+                    <?php
+
+                    if(isset($data_layer_order_data)) {
+                      $tracking_info = '<script>';
+
+                      //ADD TOP LEVEL TRACKING INFO
+                      //'transactionShipping': " . $data_layer_order_data['shipping'] . ",
+                      $tracking_info .= "dataLayer = [{
+                                'transactionId': '" . $data_layer_order_data['order_id'] . "',
+                                'transactionTotal': " . $data_layer_order_data['total'] . ",
+                                'transactionProducts': [";
+
+                      //ADD INFO FOR EACH PRODUCT
+                      foreach($data_layer_order_data['products'] as $product){
+                        $tracking_info .= "{'sku': '" . $product['model'] . "',
+                                    'name': '" . $product['name'] . "',
+                                    'price': " . $product['price'] . ",
+                                    'quantity': " . $product['quantity'] . "},";
+                      }
+
+                      $tracking_info = rtrim($tracking_info, ',');
+
+                      //ADD THE CURRENCY OF THE TRANSACTION
+                      $tracking_info .= "]";
+
+                      $tracking_info .= '}];</script>';
+
+                      print $tracking_info;
+
+                    }
+                    ?>
+                    <!-- END of Burda Praha GTM tracking -->
+			    ]]>
+            </add>
+        </operation>
+    </file>
+
+</modification>
