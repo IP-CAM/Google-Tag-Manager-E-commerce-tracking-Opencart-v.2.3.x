@@ -40,34 +40,35 @@
                     <!-- Burda Praha GTM tracking -->
                     <?php
 
-                    if(isset($data_layer_order_data)) {
-                      $tracking_info = '<script>';
+                        if(isset($data_layer_order_data)) {
 
-                      //ADD TOP LEVEL TRACKING INFO
-                      //'transactionShipping': " . $data_layer_order_data['shipping'] . ",
-                      $tracking_info .= "dataLayer = [{
-                                'transactionId': '" . $data_layer_order_data['order_id'] . "',
-                                'transactionTotal': " . $data_layer_order_data['total'] . ",
-                                'transactionProducts': [";
+                          $tracking_info = "<script>";
+                          $tracking_info.= "window.dataLayer = window.dataLayer || [];";
 
-                      //ADD INFO FOR EACH PRODUCT
-                      foreach($data_layer_order_data['products'] as $product){
-                        $tracking_info .= "{'sku': '" . $product['model'] . "',
-                                    'name': '" . $product['name'] . "',
-                                    'price': " . $product['price'] . ",
-                                    'quantity': " . $product['quantity'] . "},";
-                      }
+                          $tracking_info .= "dataLayer = [{
+                            'transactionId': '" . $data_layer_order_data['order_id'] . "',
+                            'transactionTotal': " . $data_layer_order_data['total'] . ",
+                            'transactionShipping': 0,
+                            'transactionProducts': [";
 
-                      $tracking_info = rtrim($tracking_info, ',');
+                          //ADD INFO FOR EACH PRODUCT
+                          foreach($data_layer_order_data['products'] as $product)
+                          {
+                            $tracking_info.= "{" .
+                              "'sku': '" . $product['model'] . "',
+                              'name': '" . $product['name'] . "',
+                              'price': " . $product['price'] . ",
+                              'quantity': " . $product['quantity'] .
+                            "},";
+                          }
 
-                      //ADD THE CURRENCY OF THE TRANSACTION
-                      $tracking_info .= "]";
+                          $tracking_info = rtrim($tracking_info, ',');
 
-                      $tracking_info .= '}];</script>';
+                          $tracking_info .= "]";
+                          $tracking_info .= '}];</script>';
 
-                      print $tracking_info;
-
-                    }
+                          print $tracking_info;
+                        }
                     ?>
                     <!-- END of Burda Praha GTM tracking -->
 			    ]]>
