@@ -48,6 +48,7 @@
                           $tracking_info .= "dataLayer = [{
                             'transactionId': '" . $data_layer_order_data['order_id'] . "',
                             'transactionTotal': " . $data_layer_order_data['total'] . ",
+                            'transactionTax': " . $data_layer_order_data['total'] . ",
                             'transactionShipping': 0,
                             'transactionProducts': [";
 
